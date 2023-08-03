@@ -141,7 +141,8 @@ class ServiceInterface:
     # * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
     #   ASYNC
     # * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
-    async def async_generate(self, model, inputs, template: Template = None, params: GenerateParams = None, options: Options = None):
+    async def async_generate(self, model, inputs, template: Template = None, params: GenerateParams = None,
+                             options: Options = None):
         """Generate a completion text for the given model, inputs, and params.
 
         Args:

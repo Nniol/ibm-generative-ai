@@ -1,12 +1,6 @@
 from typing import List, Dict
-from json import JSONEncoder
 from pydantic import BaseModel, Field
 from genai.schemas import Descriptions as tx
-
-
-class TemplateJSONEncoder(JSONEncoder):
-    def default(self, obj):
-        return obj.__dict__
 
 
 class TemplateData(BaseModel):
