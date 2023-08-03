@@ -44,6 +44,18 @@ class Descriptions:
     STATUS = "Filters the items to be returned based on their status. Possible values are SUCCESS and ERROR."
     ORIGIN = "Filters the items to be returned based on their origin. Possible values are API and UI."
 
+    MODERATIONS = "... to be filled in ..."
+    HAP = "... to be filled in ..."
+    INPUT = "... to be filled in ..."
+    THRESHOLD = "... to be filled in ..."
+    OUTPUT = "... to be filled in ..."
+    TEMPLATE_INSTRUCTION = "... to be filled in ..."
+    TEMPLATE_INPUT_PREFIX = "... to be filled in ..."
+    TEMPLATE_OUTPUT_PREFIX = "... to be filled in ..."
+    TEMPLATE_EXAMPLES = "... to be filled in ..."
+    TEMPLATE_ID = "... to be filled in ..."
+    TEMPLATE_DATA = "... to be filled in ..."
+
 
 class TunesAPIDescriptions:
     # Params.CreateTune

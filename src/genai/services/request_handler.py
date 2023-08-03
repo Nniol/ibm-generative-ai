@@ -7,6 +7,7 @@ from httpx import Response
 from genai._version import version
 from genai.options import Options
 from genai.services.connection_manager import ConnectionManager
+from genai.template import Template
 
 logger = logging.getLogger(__name__)
 
@@ -20,6 +21,7 @@ class RequestHandler:
         key: str,
         model_id: str = None,
         inputs: list = None,
+        template: Template = None,
         parameters: dict = None,
         options: Options = None,
         files: dict = None,
@@ -49,7 +51,6 @@ class RequestHandler:
             return headers, None, files
 
         json_data = {}
-
         if method == "POST" or method == "PUT":
             headers["Content-Type"] = "application/json"
 
@@ -58,6 +59,9 @@ class RequestHandler:
 
             if inputs is not None:
                 json_data["inputs"] = inputs
+
+            if template is not None:
+                json_data["template"] = template.toJSON()
 
             if parameters is not None:
                 json_data["parameters"] = parameters
@@ -77,6 +81,7 @@ class RequestHandler:
         key: str,
         model_id: str = None,
         inputs: list = None,
+        template: Template = None,
         parameters: dict = None,
         options: Options = None,
         files: dict = None,
@@ -98,6 +103,7 @@ class RequestHandler:
             key=key,
             model_id=model_id,
             inputs=inputs,
+            template=template,
             parameters=parameters,
             options=options,
             files=files,
@@ -133,6 +139,7 @@ class RequestHandler:
         key: str,
         model_id: str = None,
         inputs: list = None,
+        template: Template = None,
         parameters: dict = None,
         options: Options = None,
     ):
@@ -149,7 +156,8 @@ class RequestHandler:
             httpx.Response: Response from the REST API.
         """
         headers, json_data, _ = RequestHandler._metadata(
-            method="POST", key=key, model_id=model_id, inputs=inputs, parameters=parameters, options=options
+            method="POST", key=key, model_id=model_id, inputs=inputs, template=template, parameters=parameters,
+            options=options
         )
         response = None
         for attempt in range(0, ConnectionManager.MAX_RETRIES_GENERATE):
@@ -221,6 +229,7 @@ class RequestHandler:
         key: str,
         model_id: str = None,
         inputs: list = None,
+        template: Template = None,
         parameters: dict = None,
         streaming: bool = False,
         options: Options = None,
@@ -247,11 +256,11 @@ class RequestHandler:
             key=key,
             model_id=model_id,
             inputs=inputs,
+            template=template,
             parameters=parameters,
             options=options,
             files=files,
         )
-
         if streaming:
             return RequestHandler.post_stream(endpoint=endpoint, headers=headers, json_data=json_data, files=files)
         else:

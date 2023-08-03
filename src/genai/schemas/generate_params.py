@@ -36,6 +36,15 @@ class Return(ReturnOptions):
         super().__init__(*args, **kwargs)
 
 
+class Hap(BaseModel):
+    input: Optional[bool] = Field(False, description=tx.INPUT)
+    threshold: Optional[float] = Field(False, description=tx.THRESHOLD)
+    output: Optional[bool] = Field(False, description=tx.OUTPUT)
+
+
+class Moderations(BaseModel):
+    hap: Optional[Hap] = Field(None, description=tx.HAP)
+
 # NOTE - The "return" parameter is deprecated, please use return_options now.
 # Context   : The GENAI Service endpoint has an optional parameter named "return".
 # Issue     : "return" is a reserved keyword, so we can't directly use it as an
@@ -69,3 +78,4 @@ class GenerateParams(BaseModel):
     beam_width: Optional[int] = Field(None, description=tx.BEAM_WIDTH, ge=0)
     return_options: Optional[ReturnOptions] = Field(None, description=tx.RETURN)
     returns: Optional[Return] = Field(None, description=tx.RETURN, alias="return", deprecated=True)
+    moderations: Optional[Moderations] = Field(None, description=tx.MODERATIONS)

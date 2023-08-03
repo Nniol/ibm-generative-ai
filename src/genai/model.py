@@ -29,6 +29,7 @@ from genai.schemas.tunes_params import (
 from genai.services import AsyncResponseGenerator, ServiceInterface
 from genai.services.tune_manager import TuneManager
 from genai.utils.service_utils import _get_service
+from genai.template import Template
 
 logger = logging.getLogger(__name__)
 
@@ -63,7 +64,7 @@ class Model:
 
         try:
             for i in range(0, len(prompts), Metadata.DEFAULT_MAX_PROMPTS):
-                batch = prompts[i : min(i + Metadata.DEFAULT_MAX_PROMPTS, len(prompts))]
+                batch = prompts[i: min(i + Metadata.DEFAULT_MAX_PROMPTS, len(prompts))]
 
                 self.params.stream = True
                 response_gen = self.service.generate(self.model, batch, self.params, options=options, streaming=True)
@@ -88,7 +89,7 @@ class Model:
             raise GenAiException(ex)
 
     def generate_as_completed(
-        self, prompts: Union[list[str], list[PromptPattern]], options: Options = None
+        self, prompts: Union[list[str], list[PromptPattern]], template: Template = None, options: Options = None
     ) -> Generator[GenerateResponse]:
         """The generate endpoint is the centerpiece of the GENAI alpha.
         It provides a simplified and flexible, yet powerful interface to the supported
@@ -111,7 +112,8 @@ class Model:
             for i in range(0, len(prompts), Metadata.DEFAULT_MAX_PROMPTS):
                 response_gen = self.service.generate(
                     model=self.model,
-                    inputs=prompts[i : min(i + Metadata.DEFAULT_MAX_PROMPTS, len(prompts))],
+                    inputs=prompts[i: min(i + Metadata.DEFAULT_MAX_PROMPTS, len(prompts))],
+                    template=template,
                     params=self.params,
                     options=options,
                 )
@@ -130,7 +132,7 @@ class Model:
             raise GenAiException(ex)
 
     def generate(
-        self, prompts: Union[list[str], list[PromptPattern]], options: Options = None
+        self, prompts: Union[list[str], list[PromptPattern]], template: Template = None, options: Options = None
     ) -> list[GenerateResponse]:
         """The generate endpoint is the centerpiece of the GENAI alpha.
         It provides a simplified and flexible, yet powerful interface to the supported
@@ -144,7 +146,7 @@ class Model:
         Returns:
             list[GenerateResult]: A list of results
         """
-        return list(self.generate_as_completed(prompts, options))
+        return list(self.generate_as_completed(prompts, template, options))
 
     def generate_async(
         self,
@@ -226,7 +228,7 @@ class Model:
             for i in range(0, len(prompts), Metadata.DEFAULT_MAX_PROMPTS):
                 tokenize_response = self.service.tokenize(
                     model=self.model,
-                    inputs=prompts[i : min(i + Metadata.DEFAULT_MAX_PROMPTS, len(prompts))],
+                    inputs=prompts[i: min(i + Metadata.DEFAULT_MAX_PROMPTS, len(prompts))],
                     params=params,
                     options=options,
                 )

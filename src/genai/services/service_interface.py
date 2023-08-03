@@ -6,6 +6,7 @@ from genai.routers import FilesRouter, PromptTemplateRouter, TunesRouter
 from genai.schemas import GenerateParams, HistoryParams, TokenParams
 from genai.services import RequestHandler
 from genai.utils.request_utils import sanitize_params
+from genai.template import Template
 
 __all__ = ["ServiceInterface"]
 
@@ -48,7 +49,8 @@ class ServiceInterface:
             raise GenAiException(e)
 
     def generate(
-        self, model: str, inputs: list, params: GenerateParams = None, streaming: bool = False, options: Options = None
+        self, model: str, inputs: list, template: Template = None, params: GenerateParams = None,
+        streaming: bool = False, options: Options = None
     ):
         """Generate a completion text for the given model, inputs, and params.
 
@@ -65,11 +67,13 @@ class ServiceInterface:
         try:
             params = sanitize_params(params)
             endpoint = self.service_url + ServiceInterface.GENERATE
+
             return RequestHandler.post(
                 endpoint,
                 key=self.key,
                 model_id=model,
                 inputs=inputs,
+                template=template,
                 parameters=params,
                 streaming=streaming,
                 options=options,
@@ -137,7 +141,7 @@ class ServiceInterface:
     # * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
     #   ASYNC
     # * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
-    async def async_generate(self, model, inputs, params: GenerateParams = None, options: Options = None):
+    async def async_generate(self, model, inputs, template: Template = None, params: GenerateParams = None, options: Options = None):
         """Generate a completion text for the given model, inputs, and params.
 
         Args:
@@ -152,7 +156,8 @@ class ServiceInterface:
             params = sanitize_params(params)
             endpoint = self.service_url + ServiceInterface.GENERATE
             return await RequestHandler.async_generate(
-                endpoint, key=self.key, model_id=model, inputs=inputs, parameters=params, options=options
+                endpoint, key=self.key, model_id=model, inputs=inputs, template=template, parameters=params,
+                options=options
             )
         except Exception as e:
             # without VPN this will fail
